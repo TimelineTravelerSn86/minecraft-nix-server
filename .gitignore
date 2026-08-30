@@ -18,6 +18,11 @@ target/*
 target/
 !target/*.jar
 
+# Python venv for authoring datapacks with Beet (see flake.nix) - just
+# an interpreter + pip install, never commit it. datapacks-src/*/build/
+# below is the only datapack output that IS committed.
+datapacks-src/.venv
+
 # NOTE: datapacks-src/*/build/ is NOT ignored here, on purpose - unlike
 # a typical Beet project, that build output is the committed artifact
 # datapacks/sources.nix's mkLocalDatapack packages (same role
