@@ -8,12 +8,16 @@ flake.nix                       <- pins nixpkgs + agenix, exposes the module
        default.nix               <- aggregator, no logic
        core.nix                  <- package, user, systemd unit, server.properties
        plugins.nix                <- declarative jar list -> symlinks
+       datapacks.nix              <- declarative pack list -> symlinks into world/
        rcon.nix                   <- rcon config + secret injection + admin CLI
        backup.nix                 <- scheduled snapshots (save-off/all/on)
        security.nix                <- systemd sandboxing
        monitoring.nix               <- JMX exporter + healthcheck timer
   └─ pkgs/paper.nix              <- versioned Paper server derivation
   └─ plugins/sources.nix         <- mkPlugin helper + your plugin list
+  └─ plugins-src/                <- your own plugins' Java source (Maven)
+  └─ datapacks/sources.nix       <- mkLocalDatapack/mkDatapack helper + your pack list
+  └─ datapacks-src/              <- your own datapacks' Beet (Python) source
   └─ example/configuration.nix   <- a full host wiring everything together
 ```
 
@@ -54,6 +58,31 @@ touches symlinks. A plugin's own generated config folder
 (`plugins/EssentialsX/config.yml`, etc.) is real state that Nix never
 sees, so your plugin settings survive every rebuild.
 
+**Datapacks follow the same symlink contract, one level deeper.**
+`datapacks.nix` is `plugins.nix`'s sibling: same "delete this
+generation's symlinks, then relink from the declared list" preStart
+pattern, same Nix-store-as-source-of-truth model. The one structural
+difference is *where* they land - a datapack has to live inside the
+world save (`<dataDir>/<level-name>/datapacks/`, level-name defaulting
+to vanilla's `"world"`), not at the top level of `dataDir` the way
+plugin jars do, because that's where Minecraft itself looks for them.
+That also means datapacks pick up on `/reload` without a JVM restart,
+whereas a new plugin jar needs one.
+
+**Datapacks are authored outside Nix, on purpose.** Beet (a Python
+toolkit for writing datapacks as code instead of hand-editing
+`.mcfunction`/JSON trees) isn't packaged as a Nix derivation here -
+same reasoning as not vendoring Maven's dependency resolution: it's a
+dev-authoring tool, not something that ships to the server, and
+hand-pinning its dependency chain in Nix isn't worth the fragility for
+that boundary. The pattern instead mirrors `plugins-src/`: author in
+`datapacks-src/<name>/` with a `beet.json` + Python plugin, run
+`beet build` in the devShell, and commit the `build/` output it
+produces. `datapacks/sources.nix`'s `mkLocalDatapack` then packages
+that already-built folder - Nix never runs Python, it only ever
+symlinks a finished artifact into place, exactly like `mkLocalPlugin`
+does with `ping-plugin-1.0.jar`.
+
 **Security hardening is a systemd concern, not a JVM one.** `security.nix`
 sandboxes the *process* (no new privileges, read-only filesystem outside
 `dataDir`, restricted syscalls, no raw capabilities) rather than trying to
@@ -92,6 +121,28 @@ useful even without a full Prometheus/Grafana stack.
    loads on the next server start. Its generated config folder appears
    under `<dataDir>/plugins/<Name>/` on first run and is yours to edit
    directly; Nix won't touch it again.
+
+## Adding a datapack
+
+1. Scaffold a new folder under `datapacks-src/<name>/` with a
+   `beet.json` (`name`, `output: "build"`, `pipeline: ["plugin"]`) and a
+   `plugin.py` exposing a `beet_default(ctx)` function - see
+   `datapacks-src/welcome/` for a working example.
+2. Set up the devShell's Python venv once per checkout (see the comment
+   in `flake.nix`), then from inside the project folder: `beet build`.
+   Confirm the output folder it prints (`build/<name>_data_pack/`)
+   actually contains `pack.mcmeta` and `data/` before wiring it in.
+3. Add an `mkLocalDatapack { ... }` entry in `datapacks/sources.nix`
+   pointing `srcPath` at that build output, and commit the `build/`
+   folder itself - it's the checked-in artifact Nix packages, same as
+   `plugins-src/ping/target/ping-plugin-1.0.jar`.
+4. `nixos-rebuild switch` - the pack gets symlinked into
+   `<dataDir>/<level-name>/datapacks/` and takes effect on the next
+   world load. On an already-running server you don't even need to
+   wait for that: `/reload` picks it up immediately.
+5. Iterating afterwards is a fast loop - edit `plugin.py`, `beet build`,
+   `/reload` - and only needs a Nix rebuild again once you add, remove,
+   or rename which datapacks are in the list.
 
 ## What to harden further, if you want to go past this
 
