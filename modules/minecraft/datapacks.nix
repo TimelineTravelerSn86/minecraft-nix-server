@@ -45,7 +45,10 @@ in
       ${concatMapStringsSep "\n" (pack: ''
         for dp in ${pack}/*/; do
           name="$(basename "$dp")"
-          ln -sfn "$dp" "${datapacksDir}/$name"
+
+          # Minecraft 26.2 rejects datapack symlinks.
+          rm -rf "${datapacksDir}/$name"
+          cp -rL "$dp" "${datapacksDir}/$name"
         done
       '') cfg.datapacks}
     '';
