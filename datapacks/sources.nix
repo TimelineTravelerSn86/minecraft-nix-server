@@ -16,7 +16,11 @@ let
   # "name": "welcome", so its build output is
   # datapacks-src/welcome/build/welcome_data_pack).
   mkLocalDatapack =
-    { name, version, srcPath }:
+    {
+      name,
+      version,
+      srcPath,
+    }:
     pkgs.stdenv.mkDerivation {
       pname = name;
       inherit version;
@@ -34,7 +38,12 @@ let
   # expects a folder (or an unzipped-in-place pack) under
   # world/datapacks, not an opaque archive sitting there unextracted.
   mkDatapack =
-    { name, version, url, sha256 }:
+    {
+      name,
+      version,
+      url,
+      sha256,
+    }:
     pkgs.stdenv.mkDerivation {
       pname = name;
       inherit version;
@@ -63,6 +72,11 @@ in
     #   version = "1.0";
     #   srcPath = ../datapacks-src/welcome/build/welcome_data_pack;
     # })
+    (mkLocalDatapack {
+      name = "welcome";
+      version = "1.0";
+      srcPath = ../datapacks-src/welcome/build/welcome_data_pack;
+    })
 
   ];
 }
