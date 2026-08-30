@@ -1,0 +1,7 @@
+{
+  "name": "welcome",
+  "description": "Greets first-time joiners, tags them so it only fires once, and adds a /trigger-based heal command.",
+  "output": "build",
+  "pipeline": ["plugin.beet_default"]
+}
+
