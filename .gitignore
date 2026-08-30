@@ -18,6 +18,11 @@ target/*
 target/
 !target/*.jar
 
+# NOTE: datapacks-src/*/build/ is NOT ignored here, on purpose - unlike
+# a typical Beet project, that build output is the committed artifact
+# datapacks/sources.nix's mkLocalDatapack packages (same role
+# target/*.jar plays for plugins above).
+
 # Editor/OS cruft
 .DS_Store
 *.swp
