@@ -48,6 +48,12 @@ in
       version = "1.0";
       srcPath = ../plugins-src/ping/target/ping-plugin-1.0.jar;
     })
+    (mkPlugin {
+      name = "VoiceChat";
+      version = "2.6.21";
+      url = "https://cdn.modrinth.com/data/9eGKb6K1/versions/62MVmInV/voicechat-bukkit-2.6.21.jar";
+      sha256 = "1n4lkckwyggp750dmxqrqhzf8mx3wabwh4qvi185bv0r1ivlb0f0";
+    })
 
     # Your custom /ping plugin from earlier, once built into a jar:
     # (mkPlugin {
