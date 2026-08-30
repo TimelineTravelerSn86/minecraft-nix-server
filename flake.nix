@@ -47,12 +47,23 @@
         ];
       };
 
-      # `nix develop` gives you a JDK + Maven shell for building plugin jars.
+      # `nix develop` gives you a JDK + Maven shell for building plugin
+      # jars, plus Python for authoring datapacks with Beet.
+      #
+      # Beet itself is deliberately NOT packaged here - it's a
+      # dev-authoring tool, not something that ships to the server, and
+      # `python3 -m venv` already bundles pip, so there's no need for a
+      # separate pip package (that also isn't a real nixpkgs attribute -
+      # it's pkgs.python3Packages.pip if you ever did want it standalone).
+      # Set up once per checkout:
+      #   python3 -m venv .venv && source .venv/bin/activate && pip install beet
+      # then, inside any datapacks-src/<name> project: beet build
       devShells.${system}.default = pkgs.mkShell {
         packages = [
           pkgs.jdk25
           pkgs.maven
           pkgs.mcrcon
+          pkgs.python3
         ];
       };
     };
