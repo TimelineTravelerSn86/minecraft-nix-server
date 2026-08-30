@@ -1,0 +1,10 @@
+name: PingPlugin
+version: '1.0'
+main: com.erfan.ping.PingPlugin
+api-version: '1.21'
+author: erfan
+description: Shows a player's connection latency.
+commands:
+  ping:
+    description: Shows your ping, or another online player's.
+    usage: /ping [player]
