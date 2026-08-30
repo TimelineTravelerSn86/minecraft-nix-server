@@ -36,6 +36,12 @@
         inherit (pkgs) lib;
       }).all;
 
+    datapacks =
+      (import ../datapacks/sources.nix {
+        inherit pkgs;
+        inherit (pkgs) lib;
+      }).all;
+
     rcon = {
       enable = true;
       passwordFile = config.age.secrets.mc-rcon-password.path;
