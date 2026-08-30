@@ -32,3 +32,10 @@ datapacks-src/.venv
 .DS_Store
 *.swp
  
+# Beet compilation outputs and runtime cache
+build/
+.beet_cache/
+
+# Python bytecode and environment caches
+__pycache__/
+*.pyc
