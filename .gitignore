@@ -15,6 +15,7 @@ result-*
 # plugin subproject's target/ too, no matter how deep
 
 target/*
+target/
 !target/*.jar
 
 # Editor/OS cruft
