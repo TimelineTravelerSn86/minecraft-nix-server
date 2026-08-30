@@ -42,12 +42,7 @@ in
   # Example set - swap in whatever you actually want.
   # Get each sha256 with: nix-prefetch-url <jar-download-url>
   all = [
-    (mkPlugin {
-      name = "EssentialsX";
-      version = "2.20.1";
-      url = "https://github.com/EssentialsX/Essentials/releases/download/2.20.1/EssentialsX-2.20.1.jar";
-      sha256 = "0hpm3fk073f2z8aah9l1inq27h9kd60jb2c1grcs8326v85s6bl0";
-    })
+
     (mkLocalPlugin {
       name = "Ping";
       version = "1.0";
