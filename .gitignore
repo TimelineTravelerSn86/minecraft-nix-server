@@ -1,0 +1,21 @@
+# direnv
+.direnv
+
+# pre-commit
+.pre-commit-config.yaml
+
+# Nix build output symlinks (created by `nix build`)
+result
+result-*
+ 
+# direnv's local cache - .envrc itself IS tracked, this cache dir isn't
+.direnv/
+ 
+# Maven build output - matches plugins-src/*/target/ and any future
+# plugin subproject's target/ too, no matter how deep
+target/
+# Editor/OS cruft
+.DS_Store
+*.swp
+ 
+plugins-src/
