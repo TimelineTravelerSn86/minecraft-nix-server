@@ -18,9 +18,26 @@ let
         cp $src $out/${name}-${version}.jar
       '';
     };
+  mkLocalPlugin =
+    {
+      name,
+      version,
+      srcPath,
+    }:
+    pkgs.stdenv.mkDerivation {
+      pname = name;
+      inherit version;
+      src = srcPath;
+      dontUnpack = true;
+      installPhase = ''
+        mkdir -p $out
+        cp $src $out/${name}-${version}.jar
+      '';
+    };
+
 in
 {
-  inherit mkPlugin;
+  inherit mkPlugin mkLocalPlugin;
 
   # Example set - swap in whatever you actually want.
   # Get each sha256 with: nix-prefetch-url <jar-download-url>
@@ -36,6 +53,11 @@ in
       version = "5.4.130";
       url = "https://github.com/LuckPerms/LuckPerms/releases/download/v5.4.130/LuckPerms-Bukkit-5.4.130.jar";
       sha256 = lib.fakeSha256; # REPLACE
+    })
+    (mkLocalPlugin {
+      name = "Ping";
+      version = "1.0";
+      srcPath = ../plugins-src/ping/target/ping-plugin-1.0.jar;
     })
 
     # Your custom /ping plugin from earlier, once built into a jar:
