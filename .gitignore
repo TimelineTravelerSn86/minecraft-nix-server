@@ -14,8 +14,8 @@ result-*
 # Maven build output - matches plugins-src/*/target/ and any future
 # plugin subproject's target/ too, no matter how deep
 
-**/target/*
-!**/target/*.jar
+target/*
+!target/*.jar
 
 # Editor/OS cruft
 .DS_Store
