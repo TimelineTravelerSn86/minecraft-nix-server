@@ -48,7 +48,12 @@ in
 
           # Minecraft 26.2 rejects datapack symlinks.
           rm -rf "${datapacksDir}/$name"
-          cp -rL "$dp" "${datapacksDir}/$name"
+          
+          # FIX: Prevent read-only permissions from being inherited from the Nix store
+          cp -rL --no-preserve=mode "$dp" "${datapacksDir}/$name"
+          
+          # Fallback safeguard to guarantee the directory is writable for the next restart:
+          chmod -R u+w "${datapacksDir}/$name"
         done
       '') cfg.datapacks}
     '';

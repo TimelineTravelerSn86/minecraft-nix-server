@@ -3,12 +3,12 @@ from beet import Context, Function
 
 def beet_default(ctx: Context):
     """
-    Greet each player once per join, the first time they're seen.
+    Greet each player once, the first time they're seen.
     """
 
     ctx.data["welcome:tick"] = Function(
         [
-            'tellraw @s {"text": "Welcome to NixOS server!", "color":"gold", "bold":"true"}'
+            'execute as @a[tag=!welcomed] run function welcome:greet'
         ],
         tags=["minecraft:tick"],
     )
